@@ -9,9 +9,11 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct()
+    {
+
+        $this->middleware(['auth:api', 'admin'])->except(['index', 'show']);
+    }
     public function index(Request $request)
     {
         $query = Product::query();
@@ -23,7 +25,7 @@ class ProductController extends Controller
 
         $per_page = $request->input('per_page', 6);
 
-        $products = $per_page;
+        $products = $query->paginate($per_page);
 
         return response()->json([
             'message' => 'Categories berhasil diTampilkan semua.',
@@ -54,16 +56,16 @@ class ProductController extends Controller
 
         ]);
 
-        // $uploadedFileUrl = cloudinary()->upload($request->file('image')->getRealPath(), [
-        //     'folder' => 'images',
-        // ])->getSecurePath();
+        $uploadedFileUrl = cloudinary()->upload($request->file('image')->getRealPath(), [
+            'folder' => 'images',
+        ])->getSecurePath();
 
         $product = new Product;
 
         $product->name = $request->input('name');
         $product->price = $request->input('price');
         $product->description = $request->input('description');
-        // $product->image = $uploadedFileUrl;
+        $product->image = $uploadedFileUrl;
         $product->stock = $request->input('stock');
         $product->category_id = $request->input('category_id');
 
@@ -118,12 +120,12 @@ class ProductController extends Controller
         $product = Product::find($id);
 
 
-        // if ($request->hasFile('image')) {
-        //     $uploadedFileUrl = cloudinary()->upload($request->file('image')->getRealPath(), [
-        //         'folder' => 'images',
-        //     ])->getSecurePath();
-        //     $product->image =  $uploadedFileUrl;
-        // }
+        if ($request->hasFile('image')) {
+            $uploadedFileUrl = cloudinary()->upload($request->file('image')->getRealPath(), [
+                'folder' => 'images',
+            ])->getSecurePath();
+            $product->image =  $uploadedFileUrl;
+        }
 
 
         if (!$product) {
