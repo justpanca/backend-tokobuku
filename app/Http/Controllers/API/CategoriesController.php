@@ -61,7 +61,7 @@ class CategoriesController extends Controller
      */
     public function show(string $id)
     {
-        $categorie = Category::find($id);
+        $categorie = Category::with(['product'])->find($id);
 
         if (!$categorie) {
             return response()->json([
