@@ -32,6 +32,7 @@ Route::prefix('v1')->group(function () {
 
     Route::prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/profile', [AuthController::class, 'storeupdate'])->middleware('auth:api');
         Route::post('/login', [AuthController::class, 'login']);
         Route::get('/me', [AuthController::class, 'currentuser'])->middleware('auth:api');
         Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
