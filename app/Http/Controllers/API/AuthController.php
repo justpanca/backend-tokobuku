@@ -60,7 +60,7 @@ class AuthController extends Controller
                 return response()->json(['eror' => 'Invalid User'], 401);
             }
             $user = auth()->user();
-          $user = User::where('email', $request->input('email'))->with(['role', 'otpcode', 'profile', 'order'])->first();
+          $user = User::where('email', $request->input('email'))->with(['role', 'profile', 'order'])->first();
               return response()->json ([ 
                 'message' => 'User berhasil login register ',
                 'user' => $user,
@@ -73,7 +73,6 @@ public function currentuser(){
     $user = auth()->user();
     $userData = User::with([
         'role',  
-        'otpcode',   
         'profile',  
         'order'     
     ])->find($user->id);

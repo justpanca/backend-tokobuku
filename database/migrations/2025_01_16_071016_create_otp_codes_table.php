@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('otp')->unique();
             $table->timestamp('valid_until');
             $table->uuid('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,3 +33,4 @@ return new class extends Migration
         Schema::dropIfExists('otp_codes');
     }
 };
+    
