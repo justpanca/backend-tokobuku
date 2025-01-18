@@ -29,7 +29,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('category', CategoriesController::class);
     Route::apiResource('product', ProductController::class);
     Route::apiResource('role', RoleController::class)->middleware(['auth:api', 'admin']);
-    Route::post('order', [OrdersController::class, 'storeupdate'])->middleware(['auth:api']);
+    Route::post('order', [OrdersController::class, 'storeupdate'])->middleware(['auth:api', 'verifiedAccount']);
 
 
     Route::prefix('auth')->group(function () {
