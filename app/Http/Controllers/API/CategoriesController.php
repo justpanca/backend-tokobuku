@@ -24,7 +24,7 @@ class CategoriesController extends Controller
         $categories = Category::all();
 
         return response()->json([
-            'message' => 'Categories berhasil diTampilkan semua.',
+            'message' => 'Category berhasil diTampilkan semua.',
             'data' => $categories
         ], 200);
     }
@@ -51,7 +51,7 @@ class CategoriesController extends Controller
 
         return response()->json([
 
-            'message' => 'Categories berhasil dibuat.',
+            'message' => 'Category berhasil dibuat.',
             'data' => $categories,
         ], 201);
     }
@@ -66,14 +66,14 @@ class CategoriesController extends Controller
         if (!$categorie) {
             return response()->json([
 
-                'message' => "Categori dengan id: $id tidak ditemukan.",
+                'message' => "Category tidak ditemukan!",
 
             ], 404);
         }
 
         return response()->json([
 
-            'message' => "Categori dengan id: $id berhasil ditemukan.",
+            'message' => "Category berhasil ditemukan.",
             'data' => $categorie,
         ], 200);
     }
@@ -97,7 +97,7 @@ class CategoriesController extends Controller
         if (!$categorie) {
             return response()->json([
 
-                'message' => "Categori dengan id: $id tidak ditemukan.",
+                'message' => "Category tidak ditemukan.",
 
             ], 404);
         }
@@ -106,7 +106,7 @@ class CategoriesController extends Controller
         $categorie->save();
 
         return response([
-            'message' => "Berhasil melakukan update Categorie id : $id!",
+            'message' => "Berhasil melakukan update Category!",
             'data' => $categorie,
         ], 201);
     }
@@ -121,7 +121,7 @@ class CategoriesController extends Controller
         if (!$categorie) {
             return response()->json([
 
-                'message' => "Categori dengan id: $id tidak ditemukan.",
+                'message' => "Category  tidak ditemukan.",
 
             ], 404);
         }
@@ -129,7 +129,7 @@ class CategoriesController extends Controller
         $categorie->delete();
 
         return response([
-            'message' => "Berhasil melakukan update Categorie id : $id!",
+            'message' => "Berhasil menghapus category! ",
 
         ], 200);
     }

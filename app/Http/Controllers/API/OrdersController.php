@@ -13,8 +13,6 @@ class OrdersController extends Controller
     public function storeupdate(Request $request)
     {
 
-
-
         // Set konfigurasi Midtrans
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');

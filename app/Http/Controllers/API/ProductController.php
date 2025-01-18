@@ -28,7 +28,7 @@ class ProductController extends Controller
         $products = $query->paginate($per_page);
 
         return response()->json([
-            'message' => 'Categories berhasil diTampilkan semua.',
+            'message' => 'Product berhasil diTampilkan semua.',
             'data' => $products
         ], 200);
     }
@@ -87,12 +87,12 @@ class ProductController extends Controller
 
         if (!$product) {
             return response()->json([
-                'message' => "Product dengan id: $id tidak ditemukan.",
+                'message' => "Product tidak ditemukan.",
             ], 404);
         }
 
         return response()->json([
-            'message' => "Product dengan id: $id ditemukan.",
+            'message' => "Product berhasil ditemukan.",
             'data' => $product,
         ], 200);
     }
@@ -130,7 +130,7 @@ class ProductController extends Controller
 
         if (!$product) {
             return response()->json([
-                'message' => "Product dengan id: $id tidak ditemukan",
+                'message' => "Product tidak ditemukan",
             ], 404);
         }
 
@@ -160,7 +160,7 @@ class ProductController extends Controller
 
         if (!$product) {
             return response()->json([
-                'message' => "Product dengan id: $id tidak ditemukan",
+                'message' => "Product  tidak ditemukan",
             ], 404);
         }
         $product->delete();
