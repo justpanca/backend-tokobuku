@@ -12,35 +12,21 @@ class OrdersController extends Controller
 {
     public function storeupdate(Request $request)
     {
-        $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'address' => 'required',
-            'quantity' => "required|integer",
-            'total_price' => 'required|integer'
 
-        ], [
-            'required' => 'input :attribute harus diisi!.',
-            'in' => 'Input :attribute tidak valid, harus salah satu dari pending, approved, atau rejected.',
-            'integer' => 'input :attribute harus berupa angka',
-        ]);
+
+
         // Set konfigurasi Midtrans
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
         Config::$isSanitized = config('midtrans.is_sanitized');
         Config::$is3ds = config('midtrans.is_3ds');
 
-        $productId = $request->input('product_id');
-        $product = Product::find($productId);
-        if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
-        }
-
-
+        $productId = Product::findOrFail($request->input('product_id'));
         $orderId = uniqid();
+        $total_price =  $request->input('price') * $request->input('quantity');
         $transactionDetails = [
             'order_id' => $orderId,
-            'gross_amount' => (float) ($request->input('total_price') * $request->input('quantity')),
+            'gross_amount' => $total_price,
         ];
 
 
@@ -49,9 +35,9 @@ class OrdersController extends Controller
         $itemDetails = [
             [
                 'id' => $productId,
-                'price' => (float) $request->input("price"),
-                'quantity' => (int) $request->input("quantity"),
-                'name' => $product->name,
+                'price' => (int) $request->input("price"),
+                'quantity' =>  $request->input("quantity"),
+                'name' => $productId->name,
             ],
         ];
 
@@ -59,9 +45,7 @@ class OrdersController extends Controller
         $user = auth()->user();
         $customerDetails = [
             'user_id' => $user->id,
-            'first_name' => $request->input("first_name"),
-            'last_name' => $request->input('last_name')
-
+            'name' => $user->name,
         ];
 
         $transaction = [

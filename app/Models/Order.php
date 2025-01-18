@@ -12,8 +12,18 @@ class Order extends Model
 
     protected $table = 'orders';
 
-    protected $fillable = ['product_id','user_id','order_id','first_name',
-    'last_name','address','total_price','quantity','status'];
+    protected $fillable = [
+        'product_id',
+        'user_id',
+        'order_id',
+        'first_name',
+        'last_name',
+        'address',
+        'total_price',
+        'quantity',
+        'status'
+    ];
+
 
     public function product()
     {
@@ -24,4 +34,3 @@ class Order extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 }
-
