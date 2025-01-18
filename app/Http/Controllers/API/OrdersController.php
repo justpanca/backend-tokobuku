@@ -21,7 +21,9 @@ class OrdersController extends Controller
 
         $productId = Product::findOrFail($request->input('product_id'));
         $orderId = uniqid();
-        $total_price =  $request->input('price') * $request->input('quantity');
+        $price = (int) $request->input('total_price');
+        $quantity = (int) $request->input('quantity');
+        $total_price = $price * $quantity;
         $transactionDetails = [
             'order_id' => $orderId,
             'gross_amount' => $total_price,
@@ -33,8 +35,8 @@ class OrdersController extends Controller
         $itemDetails = [
             [
                 'id' => $productId,
-                'price' => (int) $request->input("price"),
-                'quantity' =>  $request->input("quantity"),
+                'price' => (int) $request->input("total_price"),
+                'quantity' => (int) $request->input("quantity"),
                 'name' => $productId->name,
             ],
         ];

@@ -42,7 +42,7 @@ class RoleController extends Controller
 
 }
     public function update(Request $request, $id){
-     $request->validte(['name' => 'required|string']);
+     $request->validate(['name' => 'required|string']);
      $Role = Role::find($id);
      $Role->update($request->only('name'));
      return response()->json([
