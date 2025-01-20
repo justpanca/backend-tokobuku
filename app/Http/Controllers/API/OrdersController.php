@@ -12,7 +12,15 @@ class OrdersController extends Controller
 {
     public function storeupdate(Request $request)
     {
+        $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'address' => 'required',
 
+        ], [
+            'required' => 'input :attribute harus diisi!.',
+
+        ]);
         // Set konfigurasi Midtrans
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
@@ -45,7 +53,8 @@ class OrdersController extends Controller
         $user = auth()->user();
         $customerDetails = [
             'user_id' => $user->id,
-            'name' => $user->name,
+            'first_name' => $request->input("first_name"),
+            'last_name' => $request->input("last_name"),
         ];
 
         $transaction = [
