@@ -14,7 +14,15 @@ class OrdersController extends Controller
 {
 
 
+    public function index()
+    {
+        $order = Order::with(["user", "product"])->get();
 
+        return response()->json([
+            'message' => 'Order berhasil diTampilkan semua.',
+            'data' => $order,
+        ], 200);
+    }
 
     public function storeupdate(Request $request)
     {

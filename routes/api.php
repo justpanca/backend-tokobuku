@@ -30,6 +30,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('product', ProductController::class);
     Route::apiResource('role', RoleController::class)->middleware(['auth:api', 'admin']);
     Route::post('order', [OrdersController::class, 'storeupdate'])->middleware(['auth:api', 'verifiedAccount']);
+    Route::get('order', [OrdersController::class, 'index'])->middleware(['auth:api', 'verifiedAccount']);
 
 
     Route::prefix('auth')->group(function () {
