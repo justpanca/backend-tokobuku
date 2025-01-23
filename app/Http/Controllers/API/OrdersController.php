@@ -4,18 +4,24 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Product;
+use App\Models\Order;
 use Midtrans\Config;
 use Midtrans\Snap;
 
+
+
 class OrdersController extends Controller
 {
+
+
+
+
     public function storeupdate(Request $request)
     {
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
-            'address' => 'required',
+
 
         ], [
             'required' => 'input :attribute harus diisi!.',
@@ -27,14 +33,28 @@ class OrdersController extends Controller
         Config::$isSanitized = config('midtrans.is_sanitized');
         Config::$is3ds = config('midtrans.is_3ds');
 
-        $productId = Product::findOrFail($request->input('product_id'));
+
+        $user = auth()->user();
+
+        $order = new Order();
         $orderId = uniqid();
-        $price = (int) $request->input('total_price');
-        $quantity = (int) $request->input('quantity');
-        $total_price = $price * $quantity;
+
+        $order->product_id = $request->input('product_id');
+        $order->first_name = $request->input('first_name');
+        $order->last_name = $request->input('last_name');
+        $order->user_id = $user->id;
+        $order->order_id = $orderId;
+        $order->total_price = $request->input('total_price');
+        $order->quantity = $request->input('quantity');
+        $order->address = $request->input('address');
+
+        $order->save();
+
+
+
         $transactionDetails = [
-            'order_id' => $orderId,
-            'gross_amount' => $total_price,
+            'order_id' => $order->order_id,
+            'gross_amount' => $order->total_price,
         ];
 
 
@@ -42,19 +62,20 @@ class OrdersController extends Controller
 
         $itemDetails = [
             [
-                'id' => $productId,
-                'price' => (int) $request->input("total_price"),
-                'quantity' => (int) $request->input("quantity"),
-                'name' => $productId->name,
+                'id' => $order->product_id,
+                'name' => $order->product->name,
+                'price' => $order->total_price,
+                'quantity' => $order->quantity,
+
             ],
         ];
 
 
-        $user = auth()->user();
+
         $customerDetails = [
             'user_id' => $user->id,
-            'first_name' => $request->input("first_name"),
-            'last_name' => $request->input("last_name"),
+            'first_name' => $order->first_name,
+            'last_name' => $order->last_name,
         ];
 
         $transaction = [
