@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('product_id')->references('id')->on('products');
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->integer('order_id')->unique();
+            $table->string('order_id')->unique();
             $table->string('first_name', 255);
             $table->string('last_name', 255);
             $table->text('address');
