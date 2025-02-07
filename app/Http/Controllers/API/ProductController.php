@@ -38,30 +38,39 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|min:3',
-            'image' => 'required|mimes:jpeg,png,jpg|max:2048',
-            'description' => 'required',
-            'price' => 'required|integer',
-            'category_id' => 'required|exists:categories,id',
-            'stock' => 'required|integer'
-        ], [
-            'required' => 'input :attribute harus diisi!.',
-            'max' => 'input :atribut minimal :max bite',
-            'mimes' => 'input :atribut harus berformat jpeg,png,jpg',
-            'image' => 'input :atribut harus gambar',
-            'exists' => 'input :attribute tidak ditemukan di table genres!',
-            'integer' => 'input :attribute harus berupa angka.',
+{
+    // Validasi input
+    $request->validate([
+        'name' => 'required|min:3',
+        'image' => 'required|mimes:jpeg,png,jpg|max:2048',
+        'description' => 'required',
+        'price' => 'required|integer',
+        'category_id' => 'required|exists:categories,id',
+        'stock' => 'required|integer'
+    ], [
+        'required' => 'Input :attribute harus diisi!',
+        'max' => 'Input :attribute maksimal :max bytes',
+        'mimes' => 'Input :attribute harus berformat jpeg, png, jpg',
+        'image' => 'Input :attribute harus berupa gambar',
+        'exists' => 'Input :attribute tidak ditemukan di tabel categories!',
+        'integer' => 'Input :attribute harus berupa angka.',
+    ]);
 
-        ]);
+    // Cek apakah file ada sebelum mengupload ke Cloudinary
+    if (!$request->hasFile('image')) {
+        return response()->json([
+            'message' => 'Gambar harus diunggah!',
+        ], 400);
+    }
 
+    try {
+        // Upload gambar ke Cloudinary
         $uploadedFileUrl = cloudinary()->upload($request->file('image')->getRealPath(), [
             'folder' => 'images',
         ])->getSecurePath();
 
-        $product = new Product;
-
+        // Simpan data produk
+        $product = new Product();
         $product->name = $request->input('name');
         $product->price = $request->input('price');
         $product->description = $request->input('description');
@@ -69,14 +78,23 @@ class ProductController extends Controller
         $product->stock = $request->input('stock');
         $product->category_id = $request->input('category_id');
 
-        $product->save();
-
-
+        if ($product->save()) {
+            return response()->json([
+                'message' => "Product berhasil dibuat",
+                'data' => $product,
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => 'Gagal menyimpan produk!',
+            ], 500);
+        }
+    } catch (\Exception $e) {
         return response()->json([
-            'message' => "Product berhasil dibuat",
-            'data' => $product,
-        ], 201);
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+        ], 500);
     }
+}
+
 
     /**
      * Display the specified resource.
