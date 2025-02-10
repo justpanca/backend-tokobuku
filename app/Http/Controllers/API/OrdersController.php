@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Order;
-use Midtrans\Config;
 use Midtrans\Snap;
+use Midtrans\Config;
+use App\Models\Order;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 
 
 
@@ -26,6 +27,9 @@ class OrdersController extends Controller
 
     public function storeupdate(Request $request)
     {
+
+        Log::info('OrderController store method called.', ['request' => $request->all()]);
+
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
@@ -36,10 +40,10 @@ class OrdersController extends Controller
 
         ]);
         // Set konfigurasi Midtrans
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized = config('midtrans.is_sanitized');
-        Config::$is3ds = config('midtrans.is_3ds');
+        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
 
 
         $user = auth()->user();

@@ -4,7 +4,11 @@ use Illuminate\Support\Facades\Facade;
 
 return [
 
-   
+   'midtrans' => [
+        'server-key' => env('MIDTRANS_SERVER_KEY', null),
+        'client-key' => env('MIDTRANS_CLIENT_KEY', null),
+        'isProduction' => env('MIDTRANS_ENV', false),
+   ],
 
     /*
     |--------------------------------------------------------------------------
