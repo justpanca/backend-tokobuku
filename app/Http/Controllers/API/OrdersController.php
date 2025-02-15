@@ -8,6 +8,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 
 
 
@@ -27,8 +28,6 @@ class OrdersController extends Controller
 
     public function storeupdate(Request $request)
     {
-
-        Log::info('OrderController store method called.', ['request' => $request->all()]);
 
         $request->validate([
             'first_name' => 'required',
@@ -103,4 +102,42 @@ class OrdersController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+public function checkPaymentStatus($orderId)
+{
+    $serverKey = config('services.midtrans.server_key');
+    $response = Http::withBasicAuth($serverKey, '')
+        ->get("https://api.sandbox.midtrans.com/v2/$orderId/status");
+
+    if ($response->successful()) {
+        $status = $response->json()['transaction_status'];
+
+        // Update status di database
+        $order = Order::where('order_id', $orderId)->first();
+        if ($order) {
+            if ($status == 'settlement') {
+                $order->status = 'success';
+            } elseif ($status == 'pending') {
+                $order->status = 'pending';
+            } elseif ($status == 'deny' || $status == 'expire' || $status == 'cancel') {
+                $order->status = 'failed';
+            }
+            $order->save();
+        }
+    }
+
+    return response()->json(['status' => $status]);
+}
+
+
+//     public function checkStatus($order_id)
+// {
+//     $order = Order::where('order_id', $order_id)->first();
+//     if (!$order) {
+//         return response()->json(['message' => 'Order not found'], 404);
+//     }
+
+//     return response()->json(['status' => $order->status]);
+// }
+
 }
